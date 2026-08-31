@@ -255,7 +255,8 @@ function stopSynthMusic() {
 }
 
 function isMusicPlaying() {
-  return currentMusicMode === 'synth' ? Boolean(synthTimer) : currentMusicMode === 'file' && !music.paused
+  if (currentMusicMode === 'synth') return Boolean(synthTimer)
+  return currentMusicMode === 'file' && !music.paused && !music.muted
 }
 
 let musicStartPromise
@@ -277,6 +278,7 @@ async function startMusicOnce() {
   }
 
   try {
+    music.muted = false
     music.volume = 0
     await music.play()
     currentMusicMode = 'file'
@@ -309,7 +311,12 @@ music.addEventListener('error', () => {
   fileUnavailable = true
   if (currentMusicMode === 'file') startSynthMusic()
 })
-musicButton.addEventListener('click', () => { isMusicPlaying() ? pauseMusic() : playMusic() })
+musicButton.addEventListener('click', () => {
+  manualAudioIntent = true
+  isMusicPlaying() ? pauseMusic() : playMusic()
+})
+
+let manualAudioIntent = false
 
 async function tryAutoplayPreferUnmuted() {
   const cta = document.getElementById('audio-cta')
@@ -323,6 +330,10 @@ async function tryAutoplayPreferUnmuted() {
     if (cta) cta.style.display = 'none'
     return
   } catch (err) {}
+
+  // 用户已手动操作过音频时，放弃静音自动播放兜底，
+  // 避免迟到的自动播放 promise 复活已暂停的播放并卡在静音状态。
+  if (manualAudioIntent) return
 
   try {
     music.muted = true
@@ -341,6 +352,7 @@ const audioCta = document.getElementById('audio-cta')
 async function enableAudioFromGesture(e) {
   e && e.preventDefault && e.preventDefault()
   if (!music) return
+  manualAudioIntent = true
   try {
     music.muted = false
     await music.play()
