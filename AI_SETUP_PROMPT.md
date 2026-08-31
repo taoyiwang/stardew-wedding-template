@@ -31,7 +31,7 @@
 
 2. 为我修改分享信息：
    - 同步更新 `index.html` 中的 `<title>`、`meta name="description"`、`og:title` 和 `og:description`。
-   - 同步更新 `assets/share-cover.svg` 中的新人姓名与日期。
+   - 同步更新 `index.html` 中 `og:image` 指向的分享封面图片。
 
 3. 不要更改项目的视觉风格、页面结构、像素素材、字体、角色图像或已有动效。不要新增报名、留言、后端、数据收集等功能。
 

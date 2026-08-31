@@ -61,8 +61,8 @@ svg { shape-rendering: crispEdges; }
 .sky-stars i { position: absolute; width: 3px; height: 3px; background: #fff9cf; box-shadow: 4px 2px #ffffff8f; animation: starBlink var(--twinkle, 2.2s) ease-in-out infinite alternate; }
 .hero-copy { position: relative; z-index: 4; text-align: center; }
 .hero-copy .eyebrow { color: #ffe2a0; text-shadow: 2px 2px #395080; }
-.game-title { margin: 16px auto 15px; display: grid; justify-items: center; color: #e6a520; font-family: Impact, 'Arial Black', sans-serif; font-size: clamp(48px, 14.5vw, 68px); font-weight: 900; letter-spacing: .01em; line-height: .82; -webkit-text-stroke: 2px #744216; text-shadow: 0 3px #ffc63b, 0 7px #6d4017, 4px 9px #173a70; transform: scaleX(.9); }
-.game-title span { display: block; white-space: nowrap; }
+.game-title { margin: 16px auto 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #e6a520; font-family: Impact, 'Arial Black', sans-serif; font-size: clamp(48px, 14.5vw, 68px); font-weight: 900; letter-spacing: .01em; line-height: .82; -webkit-text-stroke: 2px #744216; text-shadow: 0 3px #ffc63b, 0 7px #6d4017, 4px 9px #173a70; transform: scaleX(.9); transform-origin: center; }
+.game-title span { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-align: center; }
 .hero-cn { margin: 21px 0 0; font-size: 15px; font-weight: 900; letter-spacing: .18em; text-shadow: 2px 3px #2b477a; }
 .hero-date { margin: 11px 0 0; color: #fff0ae; font-size: 14px; letter-spacing: .22em; text-shadow: 2px 2px #2b477a; }
 .hero-mountains { position: absolute; z-index: 1; left: -3%; right: -3%; bottom: -6px; height: min(680px, 75svh); background: url('/assets/hero-mountains.webp') center bottom / 100% 100% no-repeat; image-rendering: pixelated; filter: saturate(.96) contrast(1.01); transform: translate3d(0, var(--parallax-y), 0); -webkit-mask-image: linear-gradient(transparent 0 18%, #0003 22%, #000b 28%, #000 34%); mask-image: linear-gradient(transparent 0 18%, #0003 22%, #000b 28%, #000 34%); }
@@ -81,6 +81,8 @@ svg { shape-rendering: crispEdges; }
 .notice { background: #8fc56a; background-image: radial-gradient(circle, #d5ed9d 1px, transparent 2px), linear-gradient(90deg, #79ad5930 50%, transparent 50%), linear-gradient(#a9d77c30 50%, transparent 50%); background-size: 27px 27px, 18px 18px, 18px 18px; }
 .invitation-board { position: relative; z-index: 2; padding: 31px 19px 18px; border: 8px solid var(--wood); outline: 4px solid var(--wood-light); background: var(--paper); box-shadow: inset 0 0 0 3px #ffe3a0, 8px 9px #527942; text-align: center; }
 .invitation-board::before { content: ''; position: absolute; inset: 9px; border: 2px dashed #b97846; pointer-events: none; }
+.board-photo { position: relative; z-index: 3; margin: -52px auto 12px; width: min(196px, 62vw); padding: 6px; border: 4px solid var(--wood); outline: 3px solid var(--wood-light); background: #fff8e6; box-shadow: 5px 6px #527942; }
+.board-photo img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
 .board-kicker { position: relative; margin: 0 0 8px; color: #9d4054; font-size: 10px; letter-spacing: .14em; }
 .invitation-board h3 { position: relative; margin: 0; color: #9c4a4f; font-size: clamp(21px, 6vw, 27px); text-shadow: 2px 2px #e7a65e; }
 .board-message { position: relative; margin: 15px auto 16px; max-width: 290px; font-size: 11px; line-height: 1.9; }

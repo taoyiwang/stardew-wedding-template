@@ -74,7 +74,7 @@ https://uri.amap.com/search?keyword=<地点>&src=stardew-wedding&callnative=1
 这些信息不在 `weddingConfig` 中，为了避免发布后分享卡片仍显示占位文案，请一并替换：
 
 1. 在 [index.html](index.html) 修改 `<title>`、`description`、`og:title` 和 `og:description`。
-2. 在 [assets/share-cover.svg](assets/share-cover.svg) 修改分享封面的姓名和日期。
+2. 在 [index.html](index.html) 修改 `og:image` 指向的分享封面（当前为 [assets/together.jpg](assets/together.jpg)）。
 3. 发布前全局搜索一遍自己的姓名、手机号、地址、账号等信息。
 
 ## 背景音乐

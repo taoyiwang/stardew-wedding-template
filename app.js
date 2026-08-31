@@ -1,24 +1,22 @@
 import rsvpConfig from './rsvp-config.js'
 
 const weddingConfig = {
-  groom: '新郎姓名',
-  bride: '新娘姓名',
-  groomLatin: 'GROOM',
-  brideLatin: 'BRIDE',
-  weddingDate: '2030-10-01T00:00:00+08:00',
-  dateDot: '2030 · 10 · 01',
-  dateCn: '2030年10月1日 · 星期二',
+  groom: '王韬轶',
+  bride: '熊英格',
+  groomLatin: 'TAOYI WANG',
+  brideLatin: 'YINGGE XIONG',
+  weddingDate: '2026-10-03T12:00:00+08:00',
+  dateDot: '2026 · 10 · 03',
+  dateCn: '2026年10月3日 · 星期六',
   calendarMonth: 'OCT',
-  calendarDay: '01',
-  calendarYear: '2030',
-  venue: '示例市幸福区星露谷宴会厅',
-  venueShort: '星露谷宴会厅',
-  navigationUrl: 'https://uri.amap.com/search?keyword=%E7%A4%BA%E4%BE%8B%E5%B8%82%E5%B9%B8%E7%A6%8F%E5%8C%BA%E6%98%9F%E9%9C%B2%E8%B0%B7%E5%AE%B4%E4%BC%9A%E5%8E%85&src=stardew-wedding&callnative=1',
+  calendarDay: '03',
+  calendarYear: '2026',
+  venue: '江苏省宿迁市宿城区御膳坊',
+  venueShort: '御膳坊宴会厅',
+  navigationUrl: 'https://surl.amap.com/h34RaRM98a0',
   schedule: [
-    { label: '签到', time: '待确认', description: '领取今日任务，与老朋友相见' },
-    { label: '仪式', time: '待确认', description: '见证拥抱、誓言与交换戒指' },
-    { label: '喜宴', time: '待确认', description: '共享一场丰盛的秋日宴席' },
-    { label: '合影', time: '待确认', description: '保存这一份快乐存档' },
+    { label: '签到合影', time: '11:00:00', description: '领取今日任务，与老朋友相聚合影' },
+    { label: '答谢喜宴', time: '12:00:00', description: '共享丰盛喜宴，开启欢聚时刻' },
   ],
 }
 
@@ -66,6 +64,27 @@ weddingConfig.schedule.forEach((item, index) => {
 const weddingDate = new Date(weddingConfig.weddingDate)
 const days = Math.max(0, Math.ceil((weddingDate.getTime() - Date.now()) / 86400000))
 document.querySelector('#days-count').textContent = String(days)
+
+// 首屏大标题自适应：手机等环境缺少 Impact 字体时会回退到更宽的字体，
+// 按实际渲染宽度收缩字号，保证两行名字都完整显示且居中。
+const gameTitle = document.querySelector('.game-title')
+function fitGameTitle() {
+  if (!gameTitle) return
+  gameTitle.style.fontSize = ''
+  const available = gameTitle.clientWidth
+  if (!available) return
+  let overflow = 0
+  gameTitle.querySelectorAll('span').forEach((span) => {
+    overflow = Math.max(overflow, span.scrollWidth - span.clientWidth)
+  })
+  if (overflow > 0) {
+    const size = parseFloat(getComputedStyle(gameTitle).fontSize)
+    gameTitle.style.fontSize = `${Math.floor(size * available / (available + overflow) * 100) / 100}px`
+  }
+}
+fitGameTitle()
+window.addEventListener('resize', fitGameTitle)
+document.fonts?.ready?.then(fitGameTitle)
 
 document.querySelectorAll('[data-scroll]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -198,7 +217,6 @@ function playSynthNote(frequency) {
   gain.gain.setValueAtTime(0.8, synthContext.currentTime)
   gain.gain.exponentialRampToValueAtTime(0.001, synthContext.currentTime + 0.22)
   oscillator.connect(gain).connect(synthMaster)
-  oscillator.start()
   oscillator.stop(synthContext.currentTime + 0.23)
 }
 
@@ -240,7 +258,19 @@ function isMusicPlaying() {
   return currentMusicMode === 'synth' ? Boolean(synthTimer) : currentMusicMode === 'file' && !music.paused
 }
 
+let musicStartPromise
+
 async function playMusic() {
+  if (musicStartPromise) return musicStartPromise
+  musicStartPromise = startMusicOnce()
+  try {
+    await musicStartPromise
+  } finally {
+    musicStartPromise = undefined
+  }
+}
+
+async function startMusicOnce() {
   if (fileUnavailable) {
     await startSynthMusic()
     return
@@ -280,7 +310,75 @@ music.addEventListener('error', () => {
   if (currentMusicMode === 'file') startSynthMusic()
 })
 musicButton.addEventListener('click', () => { isMusicPlaying() ? pauseMusic() : playMusic() })
-window.setTimeout(() => { playMusic() }, 0)
+
+async function tryAutoplayPreferUnmuted() {
+  const cta = document.getElementById('audio-cta')
+  try {
+    music.muted = false
+    music.volume = 0
+    await music.play()
+    currentMusicMode = 'file'
+    setMusicState(true)
+    await fadeVolume(0.2)
+    if (cta) cta.style.display = 'none'
+    return
+  } catch (err) {}
+
+  try {
+    music.muted = true
+    music.volume = 0
+    await music.play()
+    currentMusicMode = 'file'
+    setMusicState(true)
+    if (cta) cta.style.display = 'none'
+  } catch (err) {
+    if (cta) cta.style.display = 'flex'
+  }
+}
+tryAutoplayPreferUnmuted()
+
+const audioCta = document.getElementById('audio-cta')
+async function enableAudioFromGesture(e) {
+  e && e.preventDefault && e.preventDefault()
+  if (!music) return
+  try {
+    music.muted = false
+    await music.play()
+    currentMusicMode = 'file'
+    setMusicState(true)
+    if (audioCta) audioCta.style.display = 'none'
+  } catch (err) {
+    await startSynthMusic()
+    if (audioCta) audioCta.style.display = 'none'
+  }
+}
+if (audioCta) {
+  audioCta.addEventListener('click', enableAudioFromGesture, { passive: false })
+  audioCta.addEventListener('touchstart', enableAudioFromGesture, { passive: false })
+}
+
+const interactionEvents = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown']
+async function playMusicOnFirstInteraction() {
+  if (isMusicPlaying()) return
+  if (music.muted) {
+    try {
+      music.muted = false
+      await music.play()
+      currentMusicMode = 'file'
+      setMusicState(true)
+      await fadeVolume(0.2)
+    } catch {
+      await playMusic()
+    }
+  } else {
+    await playMusic()
+  }
+  if (isMusicPlaying()) interactionEvents.forEach((eventName) => document.removeEventListener(eventName, playMusicOnFirstInteraction))
+}
+interactionEvents.forEach((eventName) => {
+  const opts = eventName === 'touchstart' ? { passive: false } : { passive: true }
+  document.addEventListener(eventName, playMusicOnFirstInteraction, opts)
+})
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
