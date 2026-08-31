@@ -11,12 +11,12 @@ const weddingConfig = {
   calendarMonth: 'OCT',
   calendarDay: '03',
   calendarYear: '2026',
-  venue: '江苏省宿迁市宿城区御膳坊',
-  venueShort: '御膳坊宴会厅',
+  venue: '江苏省宿迁市宿城区御膳坊(富康大道店)',
+  venueShort: '御膳坊 · 吉祥厅&水晶厅',
   navigationUrl: 'https://surl.amap.com/h34RaRM98a0',
   schedule: [
-    { label: '签到合影', time: '11:00:00', description: '领取今日任务，与老朋友相聚合影' },
-    { label: '答谢喜宴', time: '12:00:00', description: '共享丰盛喜宴，开启欢聚时刻' },
+    { label: '签到合影', time: '11:30:00', description: '领取今日任务，与老朋友相聚合影' },
+    { label: '答谢喜宴', time: '11:58:00', description: '共享丰盛喜宴，开启欢聚时刻' },
   ],
 }
 
